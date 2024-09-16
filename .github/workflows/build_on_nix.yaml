@@ -306,7 +306,7 @@ jobs:
 
     #
       - name: Releaser
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2
         with:
           name: "bubblewrap ${{ env.PKG_VERSION}}"
           tag_name: "bubblewrap_${{ env.PKG_VERSION }}"
@@ -321,7 +321,7 @@ jobs:
 
     #continuous
       - name: Releaser
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2
         with:
           name: "bubblewrap-@latest"
           tag_name: "continuous"
@@ -335,7 +335,7 @@ jobs:
         
     #Snapshot
       - name: Releaser
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2
         with:
           name: "Snapshot (${{ env.PKG_VERSION}}) ${{ env.UTC_TIME }} "
           tag_name: "${{ env.UTC_TIME }}"
