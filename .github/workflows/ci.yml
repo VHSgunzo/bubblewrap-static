@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - action
+    tags:
+    - '*'
+
+jobs:
+  build_and_release:
+    name: bubblewrap-static
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo sh -c 'apt update && apt install qemu-user-static -y'
+
+      - name: Build x86_64 musl
+        run: |
+            docker run --rm -v "${{ github.workspace }}:/root" --platform=linux/amd64 alpine:latest /root/build.sh
+
+      - name: Build aarch64 musl
+        run: |
+            docker run --rm -v "${{ github.workspace }}:/root" --platform=linux/arm64 alpine:latest /root/build.sh
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: release/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
