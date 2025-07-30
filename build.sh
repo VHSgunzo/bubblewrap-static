@@ -88,7 +88,7 @@ echo "= build bubblewrap"
 (cd "${bubblewrap_dir}"
 export CC=gcc
 
-patch<"$HERE/caps.patch"
+patch<"$HERE/bwrap.patch"
 meson build -D selinux=disabled
 ninja -C build bwrap.p/bubblewrap.c.o bwrap.p/bind-mount.c.o bwrap.p/network.c.o bwrap.p/utils.c.o
 (cd build && \
