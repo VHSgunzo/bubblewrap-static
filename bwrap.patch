@@ -1,5 +1,5 @@
 diff --git a/bubblewrap.c b/bubblewrap.c
-index f8728c7..ec40e5c 100644
+index f8728c7..7c8753a 100644
 --- a/bubblewrap.c
 +++ b/bubblewrap.c
 @@ -876,13 +876,13 @@ acquire_privs (void)
@@ -28,7 +28,7 @@ index f8728c7..ec40e5c 100644
                }
  
 -            strappend (&sb, ",userxattr");
-+            strappend (&sb, ",userxattr,index=off,");
++            strappend (&sb, ",userxattr,index=off");
  
              privileged_op (privileged_op_socket,
                             PRIV_SEP_OP_OVERLAY_MOUNT, 0, 0, 0, sb.str, dest);
