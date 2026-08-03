@@ -6,6 +6,10 @@ cd "$HERE"
 WITH_UPX=1
 VENDOR_UPX=1
 
+LIBCAP_VERSION=v1.2.78
+BUBBLEWRAP_VERSION=v0.11.2
+SUPER_STRIP_VERSION=3.0a
+
 platform="$(uname -s)"
 platform_arch="$(uname -m)"
 export MAKEFLAGS="-j$(nproc)"
@@ -72,24 +76,23 @@ echo "= build static deps"
     libdir="/usr/lib/"
 
 echo "= build libcap lib"
-(git clone git://git.kernel.org/pub/scm/libs/libcap/libcap.git && cd libcap/libcap
+(git clone --branch "${LIBCAP_VERSION}" --depth 1 git://git.kernel.org/pub/scm/libs/libcap/libcap.git && cd libcap/libcap
 make libcap.a
 mv -fv libcap.a $libdir)
 )
 
 echo "= download bubblewrap"
-git clone https://github.com/containers/bubblewrap.git
-bubblewrap_version="$(cd bubblewrap && git describe --long --tags|sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')"
-bubblewrap_dir="${HERE}/build/bubblewrap-${bubblewrap_version}"
-mv "bubblewrap" "bubblewrap-${bubblewrap_version}"
-echo "= bubblewrap v${bubblewrap_version}"
+git clone --branch "${BUBBLEWRAP_VERSION}" --depth 1 https://github.com/containers/bubblewrap.git
+bubblewrap_dir="${HERE}/build/bubblewrap-${BUBBLEWRAP_VERSION}"
+mv "bubblewrap" "bubblewrap-${BUBBLEWRAP_VERSION}"
+echo "= bubblewrap ${BUBBLEWRAP_VERSION}"
 
 echo "= build bubblewrap"
 (cd "${bubblewrap_dir}"
 export CC=gcc
 
 patch<"$HERE/bwrap.patch"
-meson build -D selinux=disabled
+meson build -D selinux=disabled -D support_setuid=true
 ninja -C build bwrap.p/bubblewrap.c.o bwrap.p/bind-mount.c.o bwrap.p/network.c.o bwrap.p/utils.c.o
 (cd build && \
 "$CC" $CFLAGS $LDFLAGS -o bwrap bwrap.p/bubblewrap.c.o bwrap.p/bind-mount.c.o bwrap.p/network.c.o bwrap.p/utils.c.o \
@@ -101,7 +104,7 @@ mv -fv "${bubblewrap_dir}"/build/bwrap "$HERE"/release/bwrap-${platform_arch}
 )
 
 echo "= build super-strip"
-(cd build && git clone https://github.com/aunali1/super-strip.git && cd super-strip
+(cd build && git clone --branch "${SUPER_STRIP_VERSION}" --depth 1 https://github.com/aunali1/super-strip.git && cd super-strip
 make
 mv -fv sstrip /usr/bin/)
 
